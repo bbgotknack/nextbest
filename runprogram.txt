@@ -1,0 +1,13 @@
+RUN PROGRAM ON LOCAL HOST
+streamlit run "C:\Users\MelissaSchulze\OneDrive - KUBO Group\Documents\Python Projects\MediaSuggestions\nextbest.py"
+streamlit run "C:\Users\MelissaSchulze\OneDrive - KUBO Group\Documents\Python Projects\MediaSuggestions\nextbest_v2.py"
+
+ENTER IN POWERSHELL TO ACTIVATE VIRTUAL ENVIRONMENT
+.\venv\Scripts\Activate
+
+LOGIN CREDENTIALS
+UN: Melissa
+PW: FeetUp247
+
+UN: Fake Person
+PW: 1234
