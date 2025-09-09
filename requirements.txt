@@ -1,3 +1,4 @@
-supabase-py
+supabase
 streamlit
 pandas
+
