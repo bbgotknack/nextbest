@@ -1,4 +1,6 @@
 supabase
 streamlit
 pandas
+xlsxwriter
+
 
