@@ -682,33 +682,48 @@ def page_admin():
     # ----------------------    
     st.divider()
     st.subheader("Delete User")
+    
     if users and users.data:
-        user_options=[(u["username"], u["u_id"]) for u in users.data]
+        user_options = [(u["username"], u["u_id"]) for u in users.data]
         user_to_delete = st.selectbox(
             "Select a user to delete",
             options=user_options,
-            format_func=lambda x: x[0]  # display username in dropdown
+            format_func=lambda x: x[0]  # show username in dropdown
         )
+    
         if st.button("Delete User"):
             username, u_id = user_to_delete
-
+    
             if username == st.session_state.current_username:
                 st.error("You cannot delete your own account while logged in")
             else:
-                confirm = st.checkbox(f"Confirm deletion of '{username}' and all associated data?")
+                confirm = st.checkbox(
+                    f"Confirm deletion of '{username}' and all associated data?"
+                )
                 if confirm:
-                    res = supabase.table("users").delete().eq("u_id", u_id).execute()
-                    
-                    success = res.data is not None
-                    if success:
-                        st.success(f"Deleted user '{username}' and all their friends/media items")
-                        st.rerun()
-                    else:
-                        st.error("Error deleting user")
+                    try:
+                        # First delete related rows (friends, media_items) for safety
+                        supabase.table("friends").delete().eq("user_id", u_id).execute()
+                        supabase.table("media_items").delete().eq("user_id", u_id).execute()
+    
+                        # Then delete the user
+                        res = supabase.table("users").delete().eq("u_id", u_id).execute()
+    
+                        success = bool(res.data)  # True if rows were actually deleted
+                        if success:
+                            st.success(
+                                f"Deleted user '{username}' and all their friends/media items"
+                            )
+                            st.rerun()
+                        else:
+                            st.error("No user was deleted. Please try again.")
+                    except Exception as e:
+                        st.error(f"Error deleting user: {e}")
                 else:
                     st.warning("Check the confirmation box to delete user")
     else:
         st.info("No users available to delete")
+
 
     # ----------------------
     # Reset User Password
