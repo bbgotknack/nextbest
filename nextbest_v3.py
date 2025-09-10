@@ -697,30 +697,23 @@ def page_admin():
             if username == st.session_state.current_username:
                 st.error("You cannot delete your own account while logged in")
             else:
-                confirm = st.checkbox(
-                    f"Confirm deletion of '{username}' and all associated data?"
-                )
-                if confirm:
-                    try:
-                        # First delete related rows (friends, media_items) for safety
-                        supabase.table("friends").delete().eq("user_id", u_id).execute()
-                        supabase.table("media_items").delete().eq("user_id", u_id).execute()
-    
-                        # Then delete the user
-                        res = supabase.table("users").delete().eq("u_id", u_id).execute()
-    
-                        success = bool(res.data)  # True if rows were actually deleted
-                        if success:
-                            st.success(
-                                f"Deleted user '{username}' and all their friends/media items"
-                            )
-                            st.rerun()
-                        else:
-                            st.error("No user was deleted. Please try again.")
-                    except Exception as e:
-                        st.error(f"Error deleting user: {e}")
-                else:
-                    st.warning("Check the confirmation box to delete user")
+                try:
+                    # First delete related rows (friends, media_items) for safety
+                    supabase.table("friends").delete().eq("user_id", u_id).execute()
+                    supabase.table("media_items").delete().eq("user_id", u_id).execute()
+
+                    # Then delete the user
+                    res = supabase.table("users").delete().eq("u_id", u_id).execute()
+
+                    if res.data:
+                        st.success(
+                            f"Deleted user '{username}' and all their friends/media items"
+                        )
+                        st.rerun()
+                    else:
+                        st.error("No user was deleted.")
+                except Exception as e:
+                    st.error(f"Error deleting user: {e}")
     else:
         st.info("No users available to delete")
 
