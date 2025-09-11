@@ -842,13 +842,14 @@ def page_Leaderboard():
             "friend_name": "Friend",
             "total_suggestions": "Total Suggestions"
         }, inplace=True)
-
-        # Sort by Total Suggestions descending
-        df2.sort_values(by="Total Suggestions", ascending=False, inplace=True)
-        df2.reset_index(drop=True, inplace=True)
-
-        df2.insert(0, "Rank", range(1, len(df2) + 1))
-        st.dataframe(df2, hide_index=True)
+        if not df2.empty and "Total Suggestions" in df2.columns:
+            # Sort by Total Suggestions descending
+            df2.sort_values(by="Total Suggestions", ascending=False, inplace=True)
+            df2.reset_index(drop=True, inplace=True)
+            df2.insert(0, "Rank", range(1, len(df2) + 1))
+            st.dataframe(df2, hide_index=True)
+        else:
+            st.info("No Suggestions Yet")
     else:
         st.info("No Suggestions Yet")
 
